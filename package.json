@@ -1,0 +1,8 @@
+{
+  "name": "SD SQL trong Node JS",
+  "version": "1.0.0",
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.19"
+  }
+}
