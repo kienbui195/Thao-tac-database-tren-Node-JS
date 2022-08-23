@@ -2,9 +2,9 @@
   "name": "thuchanh---xd-app-quan-li-thong-tin-sp",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "indexTakeDataFromPostman.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon indexTakeDataFromPostman.js"
   },
   "author": "",
   "license": "ISC",

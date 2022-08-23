@@ -27,7 +27,7 @@ connection.connect(err => {
 
 const server = http.createServer(async (req, res) => {
     try {
-        if (req.url === '/product/create' && req.method === 'POST') {
+        if (req.url === '/create' && req.method === 'POST') {
             const buffers = [];
             for await (const chunk of req) {
                 buffers.push(chunk);
