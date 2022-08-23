@@ -1,2 +1,4 @@
-create database quanlysanpham;
+use quanlysanpham;
+
+select * from products where id = 3;
 

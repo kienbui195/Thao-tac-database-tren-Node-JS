@@ -28,11 +28,11 @@ class Controller {
             }
             results.forEach((item, index) => {
                 html += `<tr>`
-                html += `<td>${item.id}</td>`
+                html += `<td>${index + 1}</td>`
                 html += `<td>${item.name}</td>`
                 html += `<td>${item.price}</td>`
-                html += `<td><a class="btn btn-danger" href="/delete?index=${index}">Delete</a></td>`
-                html += `<td><a class="btn btn-info" href="/update?index=${index}">Update</a></td>`
+                html += `<td><a class="btn btn-danger" href="/delete?id=${item.id}">Delete</a></td>`
+                html += `<td><a class="btn btn-info" href="/update?id=${item.id}">Update</a></td>`
             })
             fs.readFile('./view/homePage.html', 'utf-8', (err, data) => {
                 if (err) {
@@ -78,6 +78,63 @@ class Controller {
                 }
             })
         }
+    }
+
+    deleteProduct(req, res , idData) {
+        const sqlDelete = `DELETE FROM products WHERE id = ${idData};`;
+        connection.query(sqlDelete, (err, result) => {
+            if (err) {
+                throw err.stack;
+            }
+        })
+        res.writeHead(301, {'Location' : '/'})
+        res.end()
+    }
+
+    updateProduct(req, res, idData) {
+        const sql = `SELECT * FROM products WHERE id = ${idData};`;
+        connection.query(sql, (err,result) => {
+            if (err) {
+                throw err.stack;
+            }
+            if (req.method === 'GET') {
+                fs.readFile('./view/updateProductForm.html','utf-8' , (err, data) => {
+                    data = data.replace(`<input type="text" class="form-control" name="newName" id="exampleInput" style="margin-left: 20px">`,
+                        `<input type="text" class="form-control" name="newName" id="exampleInput" style="margin-left: 20px" value="${result[0].name}">`);
+                    data = data.replace(`<input type="number" class="form-control" name="newPrice" id="exampleInputPrice" style="margin-left: 20px">`,
+                        `<input type="number" class="form-control" name="newPrice" id="exampleInputPrice" style="margin-left: 20px" value="${result[0].price}">`);
+                    res.writeHead(200, {'Content-Type': 'text/html'});
+                    res.write(data);
+                    res.end();
+                })
+            } else {
+                let data = '';
+                req.on('data', chunk => {
+                    data += chunk;
+                })
+                req.on('end', () => {
+                    let newData = qs.parse(data)
+                    if (newData.newName === '' || newData.newPrice === '' ) {
+                        fs.readFile('./view/updateProductForm.html', 'utf-8' , (err, data) => {
+                            res.writeHead(200, {'Content-Type' : 'text/html'})
+                            res.write(data)
+                            res.end();
+                        })
+                    } else {
+                        const price = parseInt(newData.newPrice)
+                        const sqlAlter = `UPDATE products SET name = '${newData.newName}', price = ${price} WHERE id = ${idData};`;
+                        connection.query(sqlAlter, (err) => {
+                            if (err) {
+                                throw err.stack;
+                            }
+                        })
+                        res.writeHead(301, {'Location' : '/'})
+                        res.end();
+                    }
+                })
+            }
+        })
+
     }
 }
 
